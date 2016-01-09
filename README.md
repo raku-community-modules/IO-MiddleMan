@@ -2,15 +2,127 @@
 
 # NAME
 
-IO::MiddleMan - hijack, filter, capture, or mute writes to an IO::Handle
+IO::MiddleMan - hijack, capture, or mute writes to an IO::Handle
 
 # SYNOPSIS
 
 ```perl6
+    my $mm = IO::MiddleMan.hijack: $*OUT;
+    say "Can't see this yet!";
+    $mm.mode = 'normal';
+    say "Want to see what I said?";
+    say "Well, fine. I said $mm";
 
+    my $fh = 'some-file'.IO.open: :w;
+    my $mm = IO::MiddleMan.capture: $fh;
+    $fh.say: 'test', 42;
+    say "We wrote $mm into some-file";
+
+    IO::MiddleMan.mute: $*ERR;
+    note "you'll never see this!";
 ```
 
 # DESCRIPTION
+
+This module allows you to inject yourself in the middle between an `IO::Handle`
+and things writing into it. You can completely hijack the data, merely capture
+it, or discard it entirely.
+
+# ACCESSORS
+
+## `.data`
+
+```perl6
+    say Currently captured things are " $mm.data.join: '';
+
+    $mm.data = () unless $mm.data.grep: {/secrets/};
+    say "Haven't seen any secrets yet. Restarted the capture";
+```
+
+An array that contains data captured by [`.hijack`](#-hijack) and
+[`.capture`](#-capture) methods. Each operation on the filehandle add one
+element to `.data`; those operations are calls to `.print`, `.print-nl`,
+`.say`, and `.put` methods on the original filehandle. Note that `.data`
+added with `.say`/`.put` will have `\n` added to it already.
+
+## `.mode`
+
+```perl6
+    my $mm = IO::MiddleMan.hijack: $*OUT;
+    say "I'm hijacked!";
+    $mm.mode = 'normal';
+    say "Now things are back to normal";
+```
+
+Sets operational mode for the `IO::MiddleMan`. Valid modes are
+[`capture`](#-capture), [`hijack`](#-hijack), [`mute`](#-mute), and
+[`normal`](#-normal). See methods of the corresponding name for the
+description of the behavior these modes enable.
+
+# METHODS
+
+## `.capture`
+
+```perl6
+    my $mm = IO::MiddleMan.capture: $*OUT;
+    say "I'm watching you";
+```
+
+Creates and returns a new `IO::MiddleMan` object set to capture all the data
+sent to the `IO::Handle` given as the positional argument. Any writes to the
+original `IO::Handle` will proceed as normal, while also being stored in
+[`.data` accessor](#-data).
+
+## `.hijack`
+
+```perl6
+    my $mm = IO::MiddleMan.hijack: $*OUT;
+    say "Can't see this yet!";
+```
+
+Creates and returns a new `IO::MiddleMan` object set to hijack all the data
+sent to the `IO::Handle` given as the positional argument. Any writes to the
+original `IO::Handle` will NOT reach it and instead will be stored in
+[`.data` accessor](#-data).
+
+## `.mute`
+
+```perl6
+    my $mm = IO::MiddleMan.mute: $*OUT;
+    say "You'll never see this!";
+```
+
+Creates and returns a new `IO::MiddleMan` object set to ignore all the data
+sent to the `IO::Handle` given as the positional argument.
+
+## `.normal`
+
+```perl6
+    my $mm = IO::MiddleMan.normal: $*OUT;
+    say "Things look perfectly normal";
+```
+
+Creates and returns a new `IO::MiddleMan` object set to send all the data
+sent to the `IO::Handle` given as the positional argument as it normally would
+and no capturing of it is to be done.
+
+## `.Str`
+
+```perl6
+    say "Captured $mm";
+```
+
+This module overrides the `.Str` method to return all the
+[captured data](#-data) as a string.
+
+# CAVEATS
+
+The module currently only operates on non-binary data (i.e. `write` method
+is still native to `IO::Handle`). Patches are welcome.
+
+The given filehandle must be a writable container and its contents will
+be changed to the `IO::MiddleMan` object, thus possibly complicating some
+operations.
 
 # REPOSITORY
 

@@ -1,77 +1,47 @@
-unit module Test::Output;
-use Test;
+unit class IO::MiddleMan:ver<1.001001> is IO::Handle;
 
-my class IO::Bag {
-    has @.err-contents;
-    has @.out-contents;
-    has @.all-contents;
+subset ValidMode     of Str where any <hijack  capture  mute  normal>;
+subset OutputMethods of Str where any <print  say  put>;
 
-    method err { @.err-contents.join: '' }
-    method out { @.out-contents.join: '' }
-    method all { @.all-contents.join: '' }
+has            @.data;
+has IO::Handle $.handle;
+has ValidMode  $.mode is required is rw;
+
+method new (*@, *%) {
+    fail 'Cannot instantiate with .new. Please use one of .hijack, '
+        ~ '.capture, .mute, or .normal methods.';
 }
 
-my class IO::Capture::Single is IO::Handle {
-    has Bool    $.is-err =  False   ;
-    has IO::Bag $.bag    is required;
+method hijack  (IO::Handle $handle is rw) {
+    $handle = self.bless: :$handle :mode<hijack>;
+}
+method capture (IO::Handle $handle is rw) {
+    $handle = self.bless: :$handle :mode<capture>;
+}
+method mute    (IO::Handle $handle is rw) {
+    $handle = self.bless: :$handle :mode<mute>;
+}
+method normal  (IO::Handle $handle is rw) {
+    $handle = self.bless: :$handle :mode<normal>;
+}
 
-    method print-nl { self.print($.nl-out); }
-    method print (*@what) {
-                    $.bag.all-contents.push: @what.join: '';
-        $!is-err ?? $.bag.err-contents.push: @what.join: ''
-                 !! $.bag.out-contents.push: @what.join: '';
-
-        True;
+method !process (OutputMethods $meth , *@what) returns Bool {
+    @what       = @what».gist if $meth eq 'say';
+    @what[*-1] ~= $.nl-out    if $meth eq any <put say>;
+    given $.mode {
+        when 'normal'  { $.handle.print: |@what; }
+        when 'mute'    { return True;            }
+        when 'capture' | 'hijack' {
+            $.handle.print: |@what unless $_ eq 'hijack';
+            @.data.push: @what.join: '';
+            return True;
+        }
     }
 }
 
-my sub capture (&code) {
-    my $bag = IO::Bag.new;
-    my $out = IO::Capture::Single.new: :$bag        ;
-    my $err = IO::Capture::Single.new: :$bag :is-err;
+method print    (*@what) returns Bool { self!process: 'print', |@what }
+method print-nl          returns Bool { self!process: 'put',   ''     }
+method put      (*@what) returns Bool { self!process: 'put',   |@what }
+method say      (*@what) returns Bool { self!process: 'say',   |@what }
+method Str               returns Str  { @.data.join: ''           }
 
-    my $saved-out = $PROCESS::OUT;
-    my $saved-err = $PROCESS::ERR;
-    $PROCESS::OUT = $out;
-    $PROCESS::ERR = $err;
-
-    &code();
-
-    $PROCESS::OUT = $saved-out;
-    $PROCESS::ERR = $saved-err;
-
-    return {:out($bag.out), :err($bag.err), :all($bag.all)};
-}
-
-sub output-is   (*@args) is export { test |<all is>,   &?ROUTINE.name, |@args }
-sub output-like (*@args) is export { test |<all like>, &?ROUTINE.name, |@args }
-sub stdout-is   (*@args) is export { test |<out is>,   &?ROUTINE.name, |@args }
-sub stdout-like (*@args) is export { test |<out like>, &?ROUTINE.name, |@args }
-sub stderr-is   (*@args) is export { test |<err is>,   &?ROUTINE.name, |@args }
-sub stderr-like (*@args) is export { test |<err like>, &?ROUTINE.name, |@args }
-
-sub output-from (&code)  is export { return capture(&code)<all> }
-sub stderr-from (&code)  is export { return capture(&code)<err> }
-sub stdout-from (&code)  is export { return capture(&code)<out> }
-
-sub test (
-    Str:D $output-type where { any <all err out>  },
-    Str:D $op-name     where { any <is like from> },
-    Str:D $routine-name,
-    &code,
-    $expected where Str|Regex,
-    Str $test-name? is copy
-)
-{
-    $test-name //= "$routine-name on line {callframe(4).line}";
-    if ( $op-name eq 'from' ) {
-        return capture(&code){ $output-type };
-    }
-    else {
-        return &::($op-name)(
-            capture(&code){ $output-type },
-            $expected,
-            $test-name,
-        );
-    }
-}

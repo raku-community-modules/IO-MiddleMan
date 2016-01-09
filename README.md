@@ -59,8 +59,8 @@ it, or discard it entirely.
     say "Haven't seen any secrets yet. Restarted the capture";
 ```
 
-An array that contains data captured by [`.hijack`](#-hijack) and
-[`.capture`](#-capture) methods. Each operation on the filehandle add one
+An array that contains data captured by [`.hijack`](#hijack) and
+[`.capture`](#capture) methods. Each operation on the filehandle add one
 element to `.data`; those operations are calls to `.print`, `.print-nl`,
 `.say`, and `.put` methods on the original filehandle. Note that `.data`
 added with `.say`/`.put` will have `\n` added to it already.
@@ -75,7 +75,7 @@ added with `.say`/`.put` will have `\n` added to it already.
 
 The original `IO::Handle`. You can still successfully call data methods on it,
 and no captures will be done, regardless of what the `IO::MiddleMan`
-[`.mode`](#-mode) is.
+[`.mode`](#mode) is.
 
 ## `.mode`
 
@@ -87,8 +87,8 @@ and no captures will be done, regardless of what the `IO::MiddleMan`
 ```
 
 Sets operational mode for the `IO::MiddleMan`. Valid modes are
-[`capture`](#-capture), [`hijack`](#-hijack), [`mute`](#-mute), and
-[`normal`](#-normal). See methods of the corresponding name for the
+[`capture`](#capture), [`hijack`](#hijack), [`mute`](#mute), and
+[`normal`](#normal). See methods of the corresponding name for the
 description of the behavior these modes enable.
 
 # METHODS
@@ -103,7 +103,7 @@ description of the behavior these modes enable.
 Creates and returns a new `IO::MiddleMan` object set to capture all the data
 sent to the `IO::Handle` given as the positional argument. Any writes to the
 original `IO::Handle` will proceed as normal, while also being stored in
-[`.data` accessor](#-data).
+[`.data` accessor](#data).
 
 ## `.hijack`
 
@@ -115,7 +115,7 @@ original `IO::Handle` will proceed as normal, while also being stored in
 Creates and returns a new `IO::MiddleMan` object set to hijack all the data
 sent to the `IO::Handle` given as the positional argument. Any writes to the
 original `IO::Handle` will NOT reach it and instead will be stored in
-[`.data` accessor](#-data).
+[`.data` accessor](#data).
 
 ## `.mute`
 
@@ -145,7 +145,7 @@ and no capturing of it is to be done.
 ```
 
 This module overrides the `.Str` method to return all the
-[captured data](#-data) as a string.
+[captured data](#data) as a string.
 
 # CAVEATS
 

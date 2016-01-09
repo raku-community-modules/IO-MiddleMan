@@ -45,6 +45,18 @@ element to `.data`; those operations are calls to `.print`, `.print-nl`,
 `.say`, and `.put` methods on the original filehandle. Note that `.data`
 added with `.say`/`.put` will have `\n` added to it already.
 
+## `.handle`
+
+```perl6
+    my $mm = IO::MiddleMan.mute: $*OUT;
+    say "This is muted";
+    $mm.handle.say: "But this still works!";
+```
+
+The original `IO::Handle`. You can still successfully call data methods on it,
+and no captures will be done, regardless of what the `IO::MiddleMan`
+[`.mode`](#-mode) is.
+
 ## `.mode`
 
 ```perl6

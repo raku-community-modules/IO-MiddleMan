@@ -4,6 +4,26 @@
 
 IO::MiddleMan - hijack, capture, or mute writes to an IO::Handle
 
+# TABLE OF CONTENTS
+- [NAME](#name)
+- [SYNOPSIS](#synopsis)
+- [DESCRIPTION](#description)
+- [ACCESSORS](#accessors)
+    - [`.data`](#data)
+    - [`.handle`](#handle)
+    - [`.mode`](#mode)
+- [METHODS](#methods)
+    - [`.capture`](#capture)
+    - [`.hijack`](#hijack)
+    - [`.mute`](#mute)
+    - [`.normal`](#normal)
+    - [`.Str`](#str)
+- [CAVEATS](#caveats)
+- [REPOSITORY](#repository)
+- [BUGS](#bugs)
+- [AUTHOR](#author)
+- [LICENSE](#license)
+
 # SYNOPSIS
 
 ```perl6

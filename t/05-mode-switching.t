@@ -12,7 +12,7 @@ my $out = "foobarbazgist works!42\n" # .say
             ~ "\n",                  # .print-nl
 
 
-my $fh = $test-file-name.IO.open: :w;
+my $fh = $test-file-name.IO.open: :w, :!buffer;
 my $mm = IO::MiddleMan.hijack: $fh;
 
 subtest {

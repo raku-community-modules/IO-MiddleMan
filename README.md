@@ -26,7 +26,7 @@ IO::MiddleMan - hijack, capture, or mute writes to an IO::Handle
 
 # SYNOPSIS
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.hijack: $*OUT;
     say "Can't see this yet!";
     $mm.mode = 'normal';
@@ -52,7 +52,7 @@ it, or discard it entirely.
 
 ## `.data`
 
-```perl6
+```raku
     say Currently captured things are " $mm.data.join: '';
 
     $mm.data = () unless $mm.data.grep: {/secrets/};
@@ -67,7 +67,7 @@ added with `.say`/`.put` will have `\n` added to it already.
 
 ## `.handle`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.mute: $*OUT;
     say "This is muted";
     $mm.handle.say: "But this still works!";
@@ -79,7 +79,7 @@ and no captures will be done, regardless of what the `IO::MiddleMan`
 
 ## `.mode`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.hijack: $*OUT;
     say "I'm hijacked!";
     $mm.mode = 'normal';
@@ -95,7 +95,7 @@ description of the behavior these modes enable.
 
 ## `.capture`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.capture: $*OUT;
     say "I'm watching you";
 ```
@@ -107,7 +107,7 @@ original `IO::Handle` will proceed as normal, while also being stored in
 
 ## `.hijack`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.hijack: $*OUT;
     say "Can't see this yet!";
 ```
@@ -119,7 +119,7 @@ original `IO::Handle` will NOT reach it and instead will be stored in
 
 ## `.mute`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.mute: $*OUT;
     say "You'll never see this!";
 ```
@@ -129,7 +129,7 @@ sent to the `IO::Handle` given as the positional argument.
 
 ## `.normal`
 
-```perl6
+```raku
     my $mm = IO::MiddleMan.normal: $*OUT;
     say "Things look perfectly normal";
 ```
@@ -140,7 +140,7 @@ and no capturing of it is to be done.
 
 ## `.Str`
 
-```perl6
+```raku
     say "Captured $mm";
 ```
 
@@ -159,12 +159,12 @@ operations.
 # REPOSITORY
 
 Fork this module on GitHub:
-https://github.com/zoffixznet/perl6-IO-MiddleMan
+https://github.com/raku-community-modules/IO-MiddleMan
 
 # BUGS
 
 To report bugs or request features, please use
-https://github.com/zoffixznet/perl6-IO-MiddleMan/issues
+https://github.com/raku-community-modules/IO-MiddleMan/issues
 
 # AUTHOR
 

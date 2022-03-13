@@ -1,14 +1,21 @@
 {
-    "perl"         : "6.c",
-    "name"         : "IO::MiddleMan",
-    "license"      : "Artistic-2.0",
-    "version"      : "1.001003",
-    "description"  : "hijack, capture, or mute writes to an IO::Handle",
-    "depends"      : [ ],
-    "test-depends" : [ "Test" ],
-    "provides"     : {
-        "IO::MiddleMan": "lib/IO/MiddleMan.pm6"
-    },
-    "authors"      : [ "Zoffix Znet" ],
-    "support"      : { "source"   : "git://github.com/raku-community-modules/IO-MiddleMan.git" }
+  "name": "IO::MiddleMan",
+  "description": "hijack, capture, or mute writes to an IO::Handle",
+  "version": "1.001004",
+  "perl": "6.c",
+  "authors": [
+    "Zoffix Znet"
+  ],
+  "auth": "zef:raku-community-modules",
+  "depends": [],
+  "test-depends": [
+    "Test"
+  ],
+  "provides": {
+    "IO::MiddleMan": "lib/IO/MiddleMan.pm6"
+  },
+  "support": {
+    "source": "git://github.com/raku-community-modules/IO-MiddleMan.git"
+  },
+  "license": "Artistic-2.0"
 }

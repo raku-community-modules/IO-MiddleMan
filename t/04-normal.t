@@ -16,8 +16,6 @@ $fh.print: |<foo bar baz>, 42;
 $fh.print-nl;
 $fh.flush;
 
-$mm.handle.close;
-
 my $out = "foobarbazgist works!42\n" # .say
             ~ "foobarbaz42\n"        # .put
             ~ "foobarbaz42"          # .print
